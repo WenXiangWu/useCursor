@@ -1,0 +1,306 @@
+/* 全局样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    line-height: 1.6;
+}
+
+/* 游戏容器 */
+.game-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 游戏头部 */
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #2a2a2a;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.game-info h1 {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.game-status {
+    font-size: 16px;
+    color: #aaa;
+}
+
+.game-controls {
+    display: flex;
+    gap: 10px;
+}
+
+/* 按钮样式 */
+.btn, .action-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.btn {
+    background-color: #4a4a4a;
+    color: white;
+}
+
+.btn:hover {
+    background-color: #5a5a5a;
+}
+
+.action-btn {
+    background-color: #2c7a2c;
+    color: white;
+}
+
+.action-btn:hover {
+    background-color: #3a8a3a;
+}
+
+/* 游戏桌面 */
+.game-table {
+    position: relative;
+    height: 500px;
+    background-color: #2c7a2c;
+    border-radius: 200px;
+    margin: 20px 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+/* 公共牌区域 */
+.community-cards {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.card {
+    width: 70px;
+    height: 100px;
+    background-color: white;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    color: black;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.card.hearts, .card.diamonds {
+    color: red;
+}
+
+.card.clubs, .card.spades {
+    color: black;
+}
+
+/* 奖池区域 */
+.pot-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+.pot-amount {
+    font-weight: bold;
+    color: #ffd700;
+}
+
+/* 玩家容器 */
+.players-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+}
+
+/* 玩家位置 */
+.player-position {
+    width: 150px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+}
+
+.player-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.player-chips {
+    color: #ffd700;
+    margin-bottom: 5px;
+}
+
+.player-cards {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+.player-status {
+    font-size: 14px;
+    color: #aaa;
+}
+
+.player-current-bet {
+    color: #ffd700;
+    font-weight: bold;
+}
+
+/* 当前玩家 */
+.current-player {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+/* 玩家操作区域 */
+.player-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.raise-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.raise-controls input[type="range"] {
+    width: 150px;
+}
+
+.raise-controls input[type="number"] {
+    width: 80px;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #4a4a4a;
+    background-color: #2a2a2a;
+    color: white;
+}
+
+/* 聊天区域 */
+.chat-container {
+    height: 200px;
+    background-color: #2a2a2a;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.chat-message {
+    margin-bottom: 5px;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #3a3a3a;
+}
+
+.chat-message .player-name {
+    font-weight: bold;
+    color: #4a9eff;
+}
+
+.chat-input-container {
+    display: flex;
+    padding: 10px;
+    gap: 10px;
+    border-top: 1px solid #3a3a3a;
+}
+
+.chat-input-container input {
+    flex-grow: 1;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #4a4a4a;
+    background-color: #2a2a2a;
+    color: white;
+}
+
+.chat-input-container button {
+    padding: 8px 16px;
+    background-color: #4a4a4a;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.chat-input-container button:hover {
+    background-color: #5a5a5a;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .game-container {
+        padding: 10px;
+    }
+    
+    .game-table {
+        height: 400px;
+        border-radius: 100px;
+    }
+    
+    .card {
+        width: 50px;
+        height: 70px;
+        font-size: 18px;
+    }
+    
+    .player-position {
+        width: 120px;
+    }
+    
+    .player-actions {
+        flex-wrap: wrap;
+    }
+    
+    .raise-controls {
+        width: 100%;
+        justify-content: center;
+    }
+}

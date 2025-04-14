@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>德州扑克游戏</title>
+    <link rel="stylesheet" th:href="@{/css/game.css}">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <div class="game-info">
+                <h1>德州扑克</h1>
+                <div class="game-status" id="gameStatus">等待游戏开始...</div>
+            </div>
+            <div class="game-controls">
+                <button id="startGameBtn" class="btn">开始游戏</button>
+                <button id="pauseGameBtn" class="btn">暂停游戏</button>
+                <button id="leaveGameBtn" class="btn">离开游戏</button>
+            </div>
+        </div>
+        
+        <div class="game-table">
+            <div class="community-cards" id="communityCards">
+                <!-- 公共牌区域 -->
+            </div>
+            
+            <div class="pot-area">
+                <div class="pot-label">奖池:</div>
+                <div class="pot-amount" id="potAmount">0</div>
+            </div>
+            
+            <div class="players-container" id="playersContainer">
+                <!-- 玩家位置将通过JavaScript动态生成 -->
+            </div>
+            
+            <div class="current-player" id="currentPlayer">
+                <!-- 当前玩家信息 -->
+            </div>
+        </div>
+        
+        <div class="player-actions" id="playerActions">
+            <button id="foldBtn" class="action-btn">弃牌</button>
+            <button id="checkBtn" class="action-btn">看牌</button>
+            <button id="callBtn" class="action-btn">跟注</button>
+            <div class="raise-controls">
+                <input type="range" id="raiseSlider" min="0" max="1000" value="0">
+                <input type="number" id="raiseAmount" min="0" max="1000" value="0">
+                <button id="raiseBtn" class="action-btn">加注</button>
+            </div>
+            <button id="allInBtn" class="action-btn">全押</button>
+        </div>
+        
+        <div class="chat-container">
+            <div class="chat-messages" id="chatMessages">
+                <!-- 聊天消息将通过JavaScript动态生成 -->
+            </div>
+            <div class="chat-input-container">
+                <input type="text" id="chatInput" placeholder="输入消息...">
+                <button id="sendChatBtn">发送</button>
+            </div>
+        </div>
+    </div>
+    
+    <script th:inline="javascript">
+        // 从服务器端获取游戏ID和玩家ID
+        const gameId = /*[[${gameId}]]*/ '';
+        const playerId = /*[[${playerId}]]*/ '';
+    </script>
+    <script th:src="@{/js/game.js}"></script>
+</body>
+</html> 

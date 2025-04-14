@@ -1,0 +1,236 @@
+.main-scene {
+    -fx-background-color: #1a1a1a;
+}
+
+.nav-bar {
+    -fx-background-color: #2c3e50;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 0);
+}
+
+.nav-title {
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 5 15;
+    -fx-cursor: hand;
+}
+
+.nav-button:hover {
+    -fx-background-color: #34495e;
+    -fx-background-radius: 5;
+}
+
+.content-area {
+    -fx-background-color: #1a1a1a;
+}
+
+/* 登录界面样式 */
+.login-view {
+    -fx-background-color: #1a1a1a;
+}
+
+.login-title {
+    -fx-text-fill: white;
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+}
+
+.login-field {
+    -fx-background-color: #2c3e50;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: #95a5a6;
+    -fx-padding: 10;
+    -fx-background-radius: 5;
+    -fx-min-width: 300px;
+}
+
+.login-button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-padding: 10 30;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.login-button:hover {
+    -fx-background-color: #2980b9;
+}
+
+/* 游戏大厅样式 */
+.lobby-view {
+    -fx-background-color: #1a1a1a;
+}
+
+.lobby-title {
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.table-list {
+    -fx-background-color: #2c3e50;
+    -fx-background-radius: 5;
+    -fx-padding: 10;
+}
+
+.table-list .column-header {
+    -fx-background-color: #34495e;
+    -fx-text-fill: white;
+}
+
+.table-list .table-row-cell {
+    -fx-background-color: #2c3e50;
+    -fx-text-fill: white;
+}
+
+.table-list .table-row-cell:odd {
+    -fx-background-color: #34495e;
+}
+
+.create-table-button {
+    -fx-background-color: #27ae60;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 10 20;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.create-table-button:hover {
+    -fx-background-color: #219a52;
+}
+
+/* 个人中心样式 */
+.profile-view {
+    -fx-background-color: #1a1a1a;
+}
+
+.profile-title {
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.info-card {
+    -fx-background-color: #2c3e50;
+    -fx-padding: 20;
+    -fx-background-radius: 5;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 0);
+}
+
+.info-card .label {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+}
+
+/* 游戏界面样式 */
+.game-view {
+    -fx-background-color: #1a1a1a;
+    -fx-padding: 20;
+    -fx-spacing: 20;
+}
+
+.community-cards {
+    -fx-alignment: center;
+    -fx-padding: 20;
+    -fx-background-color: #2c3e50;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 0);
+}
+
+.player-cards {
+    -fx-alignment: center;
+    -fx-padding: 20;
+}
+
+.player-info {
+    -fx-alignment: center;
+    -fx-padding: 15;
+    -fx-background-color: #2c3e50;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 0);
+}
+
+.player-info .label {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+}
+
+.action-buttons {
+    -fx-alignment: center;
+    -fx-spacing: 15;
+    -fx-padding: 20;
+}
+
+.action-button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-padding: 15 30;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 0);
+}
+
+.action-button:hover {
+    -fx-background-color: #2980b9;
+}
+
+.action-button:pressed {
+    -fx-background-color: #2472a4;
+}
+
+.card-view {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 0);
+    -fx-background-radius: 5;
+}
+
+.table-info {
+    -fx-alignment: center;
+    -fx-padding: 15;
+    -fx-background-color: #2c3e50;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 0);
+}
+
+.table-info .label {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+/* 对话框样式 */
+.dialog-pane {
+    -fx-background-color: #2c3e50;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: #34495e;
+}
+
+.dialog-pane .header-panel .label {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+}
+
+.dialog-pane .content {
+    -fx-text-fill: white;
+}
+
+.dialog-pane .button-bar .button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-padding: 8 16;
+}
+
+.dialog-pane .button-bar .button:hover {
+    -fx-background-color: #2980b9;
+} 
