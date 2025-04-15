@@ -2,7 +2,7 @@ package com.poker.controller;
 
 import com.poker.model.Game;
 import com.poker.model.Player;
-import com.poker.service.GameService;
+import com.poker.service.IGameService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,30 +11,38 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/players")
 public class PlayerController {
-    private final GameService gameService;
+    private final IGameService gameService;
 
-    public PlayerController(GameService gameService) {
+    public PlayerController(IGameService gameService) {
         this.gameService = gameService;
     }
 
     @PostMapping("/{playerId}/join")
-    public ResponseEntity<Game> joinGame(
+    public ResponseEntity<Void> joinGame(
             @PathVariable String playerId,
             @RequestBody Map<String, String> request) {
         String gameId = request.get("gameId");
         try {
-            Player player = new Player(request.get("name"), Integer.parseInt(request.get("chips")));
-            Game game = gameService.joinGame(gameId, player);
-            return ResponseEntity.ok(game);
+            Player player = gameService.getPlayer(playerId);
+            if (player == null) {
+                player = gameService.createPlayer(request.get("name"), Integer.parseInt(request.get("chips")));
+            }
+            gameService.joinGame(gameId, player);
+            return ResponseEntity.ok().build();
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
     @PostMapping("/{playerId}/leave")
-    public ResponseEntity<Void> leaveGame(@PathVariable String playerId) {
+    public ResponseEntity<Void> leaveGame(
+            @PathVariable String playerId,
+            @RequestBody Map<String, String> request) {
         try {
-            gameService.leaveGame(playerId);
+            Player player = gameService.getPlayer(playerId);
+            if (player != null) {
+                gameService.leaveGame(request.get("gameId"), player);
+            }
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
@@ -43,7 +51,7 @@ public class PlayerController {
 
     @GetMapping("/{playerId}/game")
     public ResponseEntity<Game> getPlayerGame(@PathVariable String playerId) {
-        Game game = gameService.getPlayerGame(playerId);
+        Game game = gameService.getCurrentGame();
         if (game == null) {
             return ResponseEntity.notFound().build();
         }
@@ -55,29 +63,15 @@ public class PlayerController {
             @PathVariable String playerId,
             @RequestBody Map<String, String> action) {
         try {
-            gameService.playerAction(
-                action.get("gameId"),
-                playerId,
-                action.get("action"),
-                Integer.parseInt(action.get("amount"))
-            );
-            return ResponseEntity.ok().build();
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    @PostMapping("/{playerId}/chat")
-    public ResponseEntity<Void> sendChatMessage(
-            @PathVariable String playerId,
-            @RequestBody Map<String, String> message) {
-        try {
-            gameService.handleChatMessage(
-                message.get("gameId"),
-                playerId,
-                message.get("message"),
-                Boolean.parseBoolean(message.get("isPrivate"))
-            );
+            Player player = gameService.getPlayer(playerId);
+            if (player != null) {
+                gameService.handlePlayerAction(
+                    action.get("gameId"),
+                    player,
+                    action.get("action"),
+                    Integer.parseInt(action.get("amount"))
+                );
+            }
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().build();

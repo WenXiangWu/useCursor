@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: poker-game
+  datasource:
+    url: jdbc:h2:mem:pokerdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  websocket:
+    allowed-origins: "*"
+
+server:
+  port: 8080
+  servlet:
+    context-path: /poker
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,application/javascript,application/json
+
+logging:
+  level:
+    com.poker: DEBUG
+    org.springframework.web: INFO
+    org.hibernate: INFO
+
+game:
+  config:
+    small-blind: 10
+    big-blind: 20
+    min-players: 2
+    max-players: 9
+    max-chat-history: 100
+    game-timeout: 300  # 5分钟
+    round-timeout: 30  # 30秒
+    default-chips: 1000
+
+security:
+  default-users:
+    admin:
+      username: admin
+      password: admin123
+      role: ADMIN
+    players:
+      - username: player1
+        password: player123
+        role: PLAYER
+      - username: player2
+        password: player123
+        role: PLAYER 
