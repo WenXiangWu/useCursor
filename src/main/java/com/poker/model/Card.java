@@ -1,11 +1,16 @@
 package com.poker.model;
 
+import java.io.Serializable;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.AllArgsConstructor;
 
 @Getter
 @ToString
-public class Card {
+@AllArgsConstructor
+public class Card implements Serializable, Comparable<Card> {
+    private static final long serialVersionUID = 1L;
+    
     public enum Suit {
         HEARTS("♥"),
         DIAMONDS("♦"),
@@ -24,34 +29,34 @@ public class Card {
     }
 
     public enum Rank {
-        TWO(2, "2"),
-        THREE(3, "3"),
-        FOUR(4, "4"),
-        FIVE(5, "5"),
-        SIX(6, "6"),
-        SEVEN(7, "7"),
-        EIGHT(8, "8"),
-        NINE(9, "9"),
-        TEN(10, "10"),
-        JACK(11, "J"),
-        QUEEN(12, "Q"),
-        KING(13, "K"),
-        ACE(14, "A");
+        TWO("2", 2),
+        THREE("3", 3),
+        FOUR("4", 4),
+        FIVE("5", 5),
+        SIX("6", 6),
+        SEVEN("7", 7),
+        EIGHT("8", 8),
+        NINE("9", 9),
+        TEN("10", 10),
+        JACK("J", 11),
+        QUEEN("Q", 12),
+        KING("K", 13),
+        ACE("A", 14);
 
-        private final int value;
         private final String symbol;
+        private final int value;
 
-        Rank(int value, String symbol) {
-            this.value = value;
+        Rank(String symbol, int value) {
             this.symbol = symbol;
-        }
-
-        public int getValue() {
-            return value;
+            this.value = value;
         }
 
         public String getSymbol() {
             return symbol;
+        }
+
+        public int getValue() {
+            return value;
         }
     }
 
@@ -64,11 +69,19 @@ public class Card {
         this.rank = rank;
         this.imagePath = String.format("/images/cards/_of_.png", 
             rank.getSymbol().toLowerCase(), 
-            suit.name().toLowerCase());
+            suit.getSymbol().toLowerCase());
     }
 
     public String getImagePath() {
         return imagePath;
+    }
+
+    public Suit getSuit() {
+        return suit;
+    }
+
+    public Rank getRank() {
+        return rank;
     }
 
     @Override
@@ -82,5 +95,18 @@ public class Card {
     @Override
     public int hashCode() {
         return 31 * suit.hashCode() + rank.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return rank.getSymbol() + suit.getSymbol();
+    }
+
+    @Override
+    public int compareTo(Card other) {
+        if (this.rank.getValue() != other.rank.getValue()) {
+            return Integer.compare(this.rank.getValue(), other.rank.getValue());
+        }
+        return this.suit.compareTo(other.suit);
     }
 }

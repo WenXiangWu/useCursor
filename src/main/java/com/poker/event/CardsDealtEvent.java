@@ -1,37 +1,34 @@
 package com.poker.event;
 
+import com.poker.model.Game;
+import com.poker.model.Player;
 import com.poker.model.Card;
-import org.springframework.context.ApplicationEvent;
+import lombok.Getter;
 
-import java.util.List;
-
-public class CardsDealtEvent extends ApplicationEvent {
+@Getter
+public class CardsDealtEvent extends GameEvent {
     private final String gameId;
-    private final String playerId;
-    private final List<Card> cards;
-    private final int round;
+    private final Player player;
+    private final Card[] cards;
 
-    public CardsDealtEvent(Object source, String gameId, String playerId, List<Card> cards, int round) {
-        super(source);
-        this.gameId = gameId;
-        this.playerId = playerId;
-        this.cards = cards;
-        this.round = round;
+    public CardsDealtEvent(Object source, Game game, Player player, Card[] cards) {
+        super(source, game, player, GameEventType.CARDS_DEALT, null);
+        this.gameId = game.getId();
+        this.player = player;
+        this.cards = cards.clone();
     }
 
-    public String getGameId() {
-        return gameId;
+    @Override
+    public Game getGame() {
+        return super.getGame();
     }
 
-    public String getPlayerId() {
-        return playerId;
+    @Override
+    public Player getPlayer() {
+        return player;
     }
 
-    public List<Card> getCards() {
-        return cards;
-    }
-
-    public int getRound() {
-        return round;
+    public Card[] getCards() {
+        return cards.clone();
     }
 }

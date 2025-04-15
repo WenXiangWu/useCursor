@@ -1,10 +1,9 @@
 package com.poker.event;
 
 import com.poker.model.Player;
+import lombok.Getter;
 
-/**
- * 游戏动作类，记录游戏中的各种动作
- */
+@Getter
 public class GameAction {
     private final String type;
     private final Player player;
@@ -16,21 +15,5 @@ public class GameAction {
         this.player = player;
         this.data = data;
         this.timestamp = timestamp;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public Object getData() {
-        return data;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
     }
 }

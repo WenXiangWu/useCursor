@@ -1,81 +1,91 @@
 package com.poker.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import java.io.Serializable;
+
+import lombok.Data;
 import org.springframework.stereotype.Component;
 
 /**
  * 游戏配置类，用于配置游戏参数
  */
+@Data
 @Component
-@ConfigurationProperties(prefix = "poker.game")
-@Getter
-@Setter
-public class GameConfig {
-    private int minPlayers = 2;
-    private int maxPlayers = 9;
-    private int startingChips = 1000;
-    private int smallBlind = 5;
-    private int bigBlind = 10;
-    private int initialDealerChips = 100;
-    private int actionTimeoutSeconds = 30;
-    private int maxTimeouts = 3;
-    private boolean allowSpectators = true;
-    private int maxSpectators = 10;
-    private boolean autoMuck = true;
-    private boolean showMuckedCards = false;
-    private boolean allowChat = true;
-    private int maxChatLength = 200;
-    private boolean allowEmotes = true;
-    private boolean allowPrivateMessages = true;
-    private int maxPrivateMessageLength = 100;
-    private boolean allowTableChat = true;
-    private int maxTableChatLength = 150;
-    private boolean allowPlayerNotes = true;
-    private int maxPlayerNoteLength = 500;
-    private boolean allowPlayerStats = true;
-    private boolean showPlayerStats = true;
-    private boolean allowPlayerHistory = true;
-    private int maxPlayerHistory = 100;
-    private boolean allowPlayerAchievements = true;
-    private boolean showPlayerAchievements = true;
-    private boolean allowPlayerBadges = true;
-    private boolean showPlayerBadges = true;
-    private boolean allowPlayerAvatar = true;
-    private boolean allowPlayerCustomization = true;
-    private boolean allowPlayerSound = true;
-    private boolean allowPlayerAnimation = true;
-    private boolean allowPlayerTheme = true;
-    private boolean allowPlayerLanguage = true;
-    private boolean allowPlayerTimeZone = true;
-    private boolean allowPlayerCurrency = true;
-    private boolean allowPlayerBetting = true;
-    private boolean allowPlayerFolding = true;
-    private boolean allowPlayerChecking = true;
-    private boolean allowPlayerCalling = true;
-    private boolean allowPlayerRaising = true;
-    private boolean allowPlayerAllIn = true;
-    private boolean allowPlayerSittingOut = true;
-    private boolean allowPlayerLeaving = true;
-    private boolean allowPlayerRejoining = true;
-    private boolean allowPlayerTransferring = true;
-    private boolean allowPlayerTipping = true;
-    private boolean allowPlayerChatting = true;
-    private boolean allowPlayerEmoting = true;
-    private boolean allowPlayerPrivateMessaging = true;
-    private boolean allowPlayerTableChatting = true;
-    private boolean allowPlayerNoting = true;
-    private boolean allowPlayerStatting = true;
-    private boolean allowPlayerHistorizing = true;
-    private boolean allowPlayerAchieving = true;
-    private boolean allowPlayerBadging = true;
-    private boolean allowPlayerAvataring = true;
-    private boolean allowPlayerCustomizing = true;
-    private boolean allowPlayerSounding = true;
-    private boolean allowPlayerAnimating = true;
-    private boolean allowPlayerTheming = true;
-    private boolean allowPlayerLanguaging = true;
-    private boolean allowPlayerTimeZoning = true;
-    private boolean allowPlayerCurrencying = true;
+public class GameConfig implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private int smallBlind;
+    private int bigBlind;
+    private int minPlayers;
+    private int maxPlayers;
+    private int maxChatHistory;
+    private int gameTimeout;  // 游戏超时时间（秒）
+
+    public GameConfig() {
+        // 默认配置
+        this.smallBlind = 10;
+        this.bigBlind = 20;
+        this.minPlayers = 2;
+        this.maxPlayers = 9;
+        this.maxChatHistory = 100;
+        this.gameTimeout = 30;
+    }
+
+    public GameConfig(int smallBlind, int bigBlind, int minPlayers, int maxPlayers, 
+                     int maxChatHistory, int gameTimeout) {
+        this.smallBlind = smallBlind;
+        this.bigBlind = bigBlind;
+        this.minPlayers = minPlayers;
+        this.maxPlayers = maxPlayers;
+        this.maxChatHistory = maxChatHistory;
+        this.gameTimeout = gameTimeout;
+    }
+
+    // 构建器模式，用于创建自定义配置
+    public static GameConfigBuilder builder() {
+        return new GameConfigBuilder();
+    }
+
+    public static class GameConfigBuilder {
+        private int smallBlind = 10;
+        private int bigBlind = 20;
+        private int minPlayers = 2;
+        private int maxPlayers = 9;
+        private int maxChatHistory = 100;
+        private int gameTimeout = 30;
+
+        public GameConfigBuilder smallBlind(int smallBlind) {
+            this.smallBlind = smallBlind;
+            return this;
+        }
+
+        public GameConfigBuilder bigBlind(int bigBlind) {
+            this.bigBlind = bigBlind;
+            return this;
+        }
+
+        public GameConfigBuilder minPlayers(int minPlayers) {
+            this.minPlayers = minPlayers;
+            return this;
+        }
+
+        public GameConfigBuilder maxPlayers(int maxPlayers) {
+            this.maxPlayers = maxPlayers;
+            return this;
+        }
+
+        public GameConfigBuilder maxChatHistory(int maxChatHistory) {
+            this.maxChatHistory = maxChatHistory;
+            return this;
+        }
+
+        public GameConfigBuilder gameTimeout(int gameTimeout) {
+            this.gameTimeout = gameTimeout;
+            return this;
+        }
+
+        public GameConfig build() {
+            return new GameConfig(smallBlind, bigBlind, minPlayers, maxPlayers, 
+                                maxChatHistory, gameTimeout);
+        }
+    }
 }

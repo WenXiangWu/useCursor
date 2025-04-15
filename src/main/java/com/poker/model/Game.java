@@ -1,35 +1,64 @@
 package com.poker.model;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 游戏类，管理游戏的状态和逻辑
  */
-public class Game {
-    private final String id;
-    private final GameConfig config;
-    private GameStatus status;
-    private final List<Player> players;
-    private final Map<String, Player> playerMap;
-    private final List<Card> deck;
-    private final List<Card> communityCards;
-    private final List<ChatMessage> chatMessages;
-    private final List<GameAction> history;
+@Getter
+@Setter
+public class Game implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
+    private String id;
+    private GameConfig config;
+    private String gameState; // WAITING, PLAYING, FINISHED
+    private List<Player> players;
+    private Map<String, Player> playerMap;
+    private List<Card> deck;
+    private List<Card> communityCards;
+    private Map<String, List<Card>> playerHands;
+    private List<ChatMessage> chatMessages;
+    private List<GameAction> history;
     private int currentRound;
     private int pot;
-    private Player currentPlayer;
+    private String currentPlayer;
     private Player dealer;
     private int smallBlind;
     private int bigBlind;
     private long lastActionTime;
-    private final long createdAt;
+    private long createdAt;
+    private int currentBet;
+    private int dealerPosition;
+    private GameState state;
+    private Map<String, Integer> sidePots;
+    private List<GameAction> actionHistory;
+    private Map<String, Integer> playerBets;
+    private List<String> activePlayers;
+    private List<String> foldedPlayers;
+    private List<ChatMessage> chatHistory;
+    private Date startTime;
+
+    public enum GameState {
+        WAITING_FOR_PLAYERS,
+        STARTING,
+        PREFLOP,
+        FLOP,
+        TURN,
+        RIVER,
+        SHOWDOWN,
+        FINISHED
+    }
 
     public Game(GameConfig config) {
         this.id = UUID.randomUUID().toString();
         this.config = config;
-        this.status = GameStatus.WAITING;
+        this.gameState = "WAITING";
         this.players = new CopyOnWriteArrayList<>();
         this.playerMap = new ConcurrentHashMap<>();
         this.deck = new ArrayList<>();
@@ -42,13 +71,23 @@ public class Game {
         this.bigBlind = config.getBigBlind();
         this.createdAt = System.currentTimeMillis();
         this.lastActionTime = createdAt;
+        this.currentBet = 0;
+        this.dealerPosition = 0;
+        this.state = GameState.WAITING_FOR_PLAYERS;
+        this.sidePots = new HashMap<>();
+        this.actionHistory = new ArrayList<>();
+        this.playerBets = new HashMap<>();
+        this.activePlayers = new ArrayList<>();
+        this.foldedPlayers = new ArrayList<>();
+        this.chatHistory = new ArrayList<>();
+        this.startTime = new Date();
         initializeDeck();
     }
 
     private void initializeDeck() {
         deck.clear();
-        for (Suit suit : Suit.values()) {
-            for (Rank rank : Rank.values()) {
+        for (Card.Suit suit : Card.Suit.values()) {
+            for (Card.Rank rank : Card.Rank.values()) {
                 deck.add(new Card(suit, rank));
             }
         }
@@ -56,15 +95,16 @@ public class Game {
     }
 
     public boolean canJoin(Player player) {
-        return status == GameStatus.WAITING 
-            && players.size() < config.getMaxPlayers() 
-            && !playerMap.containsKey(player.getId());
+        return players.size() < config.getMaxPlayers() && 
+               !players.stream().anyMatch(p -> p.getId().equals(player.getId()));
     }
 
     public void addPlayer(Player player) {
         if (canJoin(player)) {
             players.add(player);
             playerMap.put(player.getId(), player);
+            playerBets.put(player.getId(), 0);
+            activePlayers.add(player.getId());
             addHistory("PLAYER_JOINED", player, null);
         }
     }
@@ -72,8 +112,11 @@ public class Game {
     public void removePlayer(Player player) {
         if (players.remove(player)) {
             playerMap.remove(player.getId());
+            playerBets.remove(player.getId());
+            foldedPlayers.add(player.getId());
+            activePlayers.remove(player.getId());
             addHistory("PLAYER_LEFT", player, null);
-            if (status == GameStatus.PLAYING && players.size() < config.getMinPlayers()) {
+            if (gameState.equals("PLAYING") && players.size() < config.getMinPlayers()) {
                 pause();
             }
         }
@@ -81,20 +124,19 @@ public class Game {
 
     public boolean canStart(String playerId) {
         Player player = getPlayer(playerId);
-        return status == GameStatus.WAITING 
-            && player != null 
-            && player.isHost() 
-            && players.size() >= config.getMinPlayers();
+        return players.size() >= config.getMinPlayers() && 
+               players.get(0).getId().equals(playerId) && 
+               "WAITING".equals(gameState);
     }
 
     public void start() {
-        if (status == GameStatus.WAITING) {
-            status = GameStatus.PLAYING;
+        if (players.size() >= config.getMinPlayers()) {
+            gameState = "PLAYING";
             currentRound = 1;
             dealer = players.get(0);
             dealCards();
             postBlinds();
-            currentPlayer = getNextPlayer(dealer);
+            currentPlayer = players.get(0).getId();
             addHistory("GAME_STARTED", null, null);
             updateLastActionTime();
         }
@@ -102,14 +144,14 @@ public class Game {
 
     public boolean canPause(String playerId) {
         Player player = getPlayer(playerId);
-        return status == GameStatus.PLAYING 
+        return gameState.equals("PLAYING") 
             && player != null 
             && player.isHost();
     }
 
     public void pause() {
-        if (status == GameStatus.PLAYING) {
-            status = GameStatus.PAUSED;
+        if (gameState.equals("PLAYING")) {
+            gameState = "PAUSED";
             addHistory("GAME_PAUSED", null, null);
             updateLastActionTime();
         }
@@ -117,14 +159,14 @@ public class Game {
 
     public boolean canResume(String playerId) {
         Player player = getPlayer(playerId);
-        return status == GameStatus.PAUSED 
+        return gameState.equals("PAUSED") 
             && player != null 
             && player.isHost();
     }
 
     public void resume() {
-        if (status == GameStatus.PAUSED) {
-            status = GameStatus.PLAYING;
+        if (gameState.equals("PAUSED")) {
+            gameState = "PLAYING";
             addHistory("GAME_RESUMED", null, null);
             updateLastActionTime();
         }
@@ -133,6 +175,8 @@ public class Game {
     public void handleFold(Player player) {
         if (isValidAction(player)) {
             player.fold();
+            foldedPlayers.add(player.getId());
+            activePlayers.remove(player.getId());
             addHistory("FOLD", player, null);
             moveToNextPlayer();
         }
@@ -151,6 +195,7 @@ public class Game {
             if (player.getChips() >= callAmount) {
                 player.bet(callAmount);
                 pot += callAmount;
+                playerBets.put(player.getId(), currentBet);
                 addHistory("CALL", player, callAmount);
                 moveToNextPlayer();
             }
@@ -161,6 +206,8 @@ public class Game {
         if (isValidAction(player) && canRaise(player, amount)) {
             player.bet(amount);
             pot += amount;
+            playerBets.put(player.getId(), amount);
+            currentBet = amount;
             addHistory("RAISE", player, amount);
             moveToNextPlayer();
         }
@@ -171,22 +218,28 @@ public class Game {
             int amount = player.getChips();
             player.bet(amount);
             pot += amount;
+            playerBets.put(player.getId(), amount);
+            currentBet = amount;
             addHistory("ALL_IN", player, amount);
             moveToNextPlayer();
         }
     }
 
     public void handlePlayerTimeout(Player player) {
-        if (status == GameStatus.PLAYING && currentPlayer == player) {
+        if (gameState.equals("PLAYING") && currentPlayer.equals(player.getId())) {
             player.fold();
+            foldedPlayers.add(player.getId());
+            activePlayers.remove(player.getId());
             addHistory("TIMEOUT_FOLD", player, null);
             moveToNextPlayer();
         }
     }
 
     public void handlePlayerDisconnect(Player player) {
-        if (status == GameStatus.PLAYING && currentPlayer == player) {
+        if (gameState.equals("PLAYING") && currentPlayer.equals(player.getId())) {
             player.fold();
+            foldedPlayers.add(player.getId());
+            activePlayers.remove(player.getId());
             addHistory("DISCONNECT_FOLD", player, null);
             moveToNextPlayer();
         }
@@ -197,12 +250,12 @@ public class Game {
     }
 
     public boolean canUpdateConfig() {
-        return status == GameStatus.WAITING;
+        return gameState.equals("WAITING");
     }
 
     public void updateConfig(GameConfig newConfig) {
         if (canUpdateConfig()) {
-            // 更新配置
+            this.config = newConfig;
             this.smallBlind = newConfig.getSmallBlind();
             this.bigBlind = newConfig.getBigBlind();
             addHistory("CONFIG_UPDATED", null, newConfig);
@@ -211,21 +264,28 @@ public class Game {
 
     public void addChatMessage(ChatMessage message) {
         chatMessages.add(message);
+        chatHistory.add(message);
         if (chatMessages.size() > config.getMaxChatHistory()) {
             chatMessages.remove(0);
+        }
+        if (chatHistory.size() > 100) { // 限制聊天历史记录大小
+            chatHistory.remove(0);
         }
     }
 
     public boolean isExpired(long currentTime) {
-        return status == GameStatus.WAITING 
+        return gameState.equals("WAITING") 
             && currentTime - lastActionTime > config.getGameTimeout() * 1000;
     }
 
     private void dealCards() {
         for (Player player : players) {
-            player.clearCards();
-            player.addCard(deck.remove(0));
-            player.addCard(deck.remove(0));
+            if (player.isActive()) {
+                player.clearHoleCards();
+                Card card1 = deck.remove(0);
+                Card card2 = deck.remove(0);
+                player.setHoleCards(new Card[]{card1, card2});
+            }
         }
     }
 
@@ -240,10 +300,10 @@ public class Game {
         bbPlayer.bet(bigBlind);
         pot = smallBlind + bigBlind;
         
-        addHistory("BLINDS_POSTED", null, Map.of(
-            "smallBlind", smallBlind,
-            "bigBlind", bigBlind
-        ));
+        addHistory("BLINDS_POSTED", null, new HashMap<String, String>() {{
+            put("smallBlind", String.valueOf(smallBlind));
+            put("bigBlind", String.valueOf(bigBlind));
+        }});
     }
 
     private void moveToNextPlayer() {
@@ -259,20 +319,12 @@ public class Game {
         updateLastActionTime();
     }
 
-    private Player getNextPlayer(Player current) {
-        int currentIndex = players.indexOf(current);
-        int nextIndex = (currentIndex + 1) % players.size();
-        Player next = players.get(nextIndex);
-        
-        while (next.hasFolded() || next.isAllIn()) {
-            nextIndex = (nextIndex + 1) % players.size();
-            next = players.get(nextIndex);
-            if (next == current) {
-                break;
-            }
+    private String getNextPlayer(String currentPlayerId) {
+        int currentIndex = activePlayers.indexOf(currentPlayerId);
+        if (currentIndex == -1 || activePlayers.isEmpty()) {
+            return null;
         }
-        
-        return next;
+        return activePlayers.get((currentIndex + 1) % activePlayers.size());
     }
 
     private void dealCommunityCards() {
@@ -285,13 +337,13 @@ public class Game {
 
     private void endRound() {
         // TODO: 实现回合结束逻辑，包括比牌和分发奖池
-        status = GameStatus.WAITING;
+        gameState = "WAITING";
         addHistory("ROUND_ENDED", null, null);
     }
 
     private boolean isValidAction(Player player) {
-        return status == GameStatus.PLAYING 
-            && currentPlayer == player 
+        return gameState.equals("PLAYING") 
+            && currentPlayer.equals(player.getId()) 
             && !player.hasFolded() 
             && !player.isAllIn();
     }
@@ -327,22 +379,29 @@ public class Game {
         this.lastActionTime = System.currentTimeMillis();
     }
 
-    private void addHistory(String type, Player player, Object data) {
-        history.add(new GameAction(type, player, data, System.currentTimeMillis()));
+    private void addHistory(String action, Player player, Object data) {
+        GameAction gameAction = new GameAction(action, player, data);
+        gameAction.setTimestamp(System.currentTimeMillis());
+        history.add(gameAction);
     }
 
     // Getters
     public String getId() { return id; }
-    public GameStatus getStatus() { return status; }
+    public String getGameState() { return gameState; }
     public List<Player> getPlayers() { return players; }
     public Player getPlayer(String playerId) { return playerMap.get(playerId); }
     public int getCurrentRound() { return currentRound; }
     public int getPot() { return pot; }
-    public Player getCurrentPlayer() { return currentPlayer; }
+    public String getCurrentPlayer() { return currentPlayer; }
     public List<Card> getCommunityCards() { return communityCards; }
     public List<ChatMessage> getChatMessages() { return chatMessages; }
     public List<GameAction> getHistory() { return history; }
     public GameAction getLastAction() { return history.isEmpty() ? null : history.get(history.size() - 1); }
     public long getLastActionTime() { return lastActionTime; }
     public long getCreatedAt() { return createdAt; }
+    public int getCurrentBet() { return currentBet; }
+    public List<String> getActivePlayers() { return activePlayers; }
+    public List<String> getFoldedPlayers() { return foldedPlayers; }
+    public List<ChatMessage> getChatHistory() { return chatHistory; }
+    public Date getStartTime() { return startTime; }
 } 

@@ -1,23 +1,23 @@
 package com.poker.event;
 
 import com.poker.model.Game;
-import com.poker.model.Player;
+import org.springframework.context.ApplicationEvent;
 
-public class BettingRoundStartedEvent extends GameEvent {
-    private final Player firstPlayer;
-    private final int roundNumber;
-    
-    public BettingRoundStartedEvent(Game game, Player firstPlayer, int roundNumber) {
-        super(game, game.getId());
-        this.firstPlayer = firstPlayer;
-        this.roundNumber = roundNumber;
+public class BettingRoundStartedEvent extends ApplicationEvent {
+    private final Game game;
+    private final String round;
+
+    public BettingRoundStartedEvent(Object source, Game game, String round) {
+        super(source);
+        this.game = game;
+        this.round = round;
     }
-    
-    public Player getFirstPlayer() {
-        return firstPlayer;
+
+    public Game getGame() {
+        return game;
     }
-    
-    public int getRoundNumber() {
-        return roundNumber;
+
+    public String getRound() {
+        return round;
     }
 } 

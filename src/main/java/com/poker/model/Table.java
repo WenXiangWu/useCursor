@@ -1,59 +1,43 @@
 package com.poker.model;
 
-import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Data
 public class Table {
     private String id;
-    private List<Player> players;
-    private List<Card> communityCards;
-    private int pot;
-    private int currentBet;
-    private int dealerPosition;
+    private String name;
     private int smallBlind;
     private int bigBlind;
-    private GameState gameState;
+    private List<String> players;
+    private String status;
 
-    public enum GameState {
-        WAITING, DEALING, PRE_FLOP, FLOP, TURN, RIVER, SHOWDOWN
-    }
-
-    public Table(int smallBlind, int bigBlind) {
+    public Table(String name, int smallBlind, int bigBlind) {
         this.id = UUID.randomUUID().toString();
-        this.players = new ArrayList<>();
-        this.communityCards = new ArrayList<>();
+        this.name = name;
         this.smallBlind = smallBlind;
         this.bigBlind = bigBlind;
-        this.gameState = GameState.WAITING;
+        this.players = new ArrayList<>();
+        this.status = "等待中";
     }
 
-    public void addPlayer(Player player) {
-        if (players.size() < 9) { // 标准德州扑克最多9人
-            players.add(player);
-        } else {
-            throw new IllegalStateException("Table is full");
+    public String getId() { return id; }
+    public String getName() { return name; }
+    public int getSmallBlind() { return smallBlind; }
+    public int getBigBlind() { return bigBlind; }
+    public List<String> getPlayers() { return players; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+    public int getPlayerCount() { return players.size(); }
+
+    public boolean addPlayer(String playerId) {
+        if (!players.contains(playerId)) {
+            return players.add(playerId);
         }
+        return false;
     }
 
-    public void removePlayer(String playerId) {
-        players.removeIf(p -> p.getId().equals(playerId));
-    }
-
-    public void addCommunityCard(Card card) {
-        if (communityCards.size() < 5) {
-            communityCards.add(card);
-        } else {
-            throw new IllegalStateException("Cannot add more community cards");
-        }
-    }
-
-    public void clearTable() {
-        communityCards.clear();
-        pot = 0;
-        currentBet = 0;
-        players.forEach(Player::clearCards);
+    public boolean removePlayer(String playerId) {
+        return players.remove(playerId);
     }
 }

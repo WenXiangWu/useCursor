@@ -1,9 +1,7 @@
 package com.poker.event;
 
-import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
-@Getter
 public class PlayerTimeoutEvent extends ApplicationEvent {
     private final String gameId;
     private final String playerId;
@@ -26,5 +24,37 @@ public class PlayerTimeoutEvent extends ApplicationEvent {
         this.remainingTimeouts = remainingTimeouts;
         this.timestamp = timestamp;
         this.roundStage = roundStage;
+    }
+
+    public String getGameId() {
+        return gameId;
+    }
+
+    public String getPlayerId() {
+        return playerId;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public long getTimeoutDuration() {
+        return timeoutDuration;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public int getRemainingTimeouts() {
+        return remainingTimeouts;
+    }
+
+    public long getTimeoutTimestamp() {
+        return timestamp;
+    }
+
+    public String getRoundStage() {
+        return roundStage;
     }
 }

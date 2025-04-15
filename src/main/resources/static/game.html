@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>德州扑克游戏</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="game-container">
+        <!-- 游戏信息栏 -->
+        <div class="game-header">
+            <div class="player-info">
+                <span>玩家：<span id="currentPlayer"></span></span>
+                <span>筹码：<span id="playerChips"></span></span>
+            </div>
+            <div class="game-controls">
+                <button id="startNewRound" class="btn btn-success">开始新一轮</button>
+                <button id="leaveGame" class="btn btn-danger">离开游戏</button>
+            </div>
+        </div>
+
+        <!-- 游戏桌面 -->
+        <div class="game-table">
+            <!-- 荷官状态 -->
+            <div id="dealerStatus" class="dealer-status">等待开始新一轮</div>
+            
+            <!-- 公共牌区域 -->
+            <div id="communityCards">
+                <!-- 公共牌将在这里动态添加 -->
+            </div>
+
+            <!-- 奖池信息 -->
+            <div id="potInfo">
+                当前奖池：<span id="potAmount">0</span>
+            </div>
+
+            <!-- 玩家座位 -->
+            <div class="player-positions">
+                <!-- 玩家座位将在这里动态添加 -->
+            </div>
+
+            <!-- 操作面板 -->
+            <div id="actionPanel">
+                <button class="btn btn-primary" id="checkCall">看牌/跟注</button>
+                <button class="btn btn-success" id="raise">加注</button>
+                <button class="btn btn-danger" id="fold">弃牌</button>
+                <div class="raise-controls" style="display: none;">
+                    <input type="range" id="raiseAmount" min="0" max="100" value="0">
+                    <span id="raiseValue">0</span>
+                </div>
+            </div>
+
+            <!-- 模拟玩家操作面板 -->
+            <div id="simulationPanel" class="simulation-panel">
+                <h5>模拟其他玩家操作</h5>
+                <div class="player-simulation-controls">
+                    <select id="simulatedPlayer" class="form-select">
+                        <option value="">选择玩家...</option>
+                        <option value="玩家1">玩家1</option>
+                        <option value="玩家2">玩家2</option>
+                        <option value="玩家3">玩家3</option>
+                        <option value="玩家4">玩家4</option>
+                        <option value="玩家5">玩家5</option>
+                    </select>
+                    <div class="btn-group">
+                        <button class="btn btn-outline-primary" id="simCheckCall">看牌/跟注</button>
+                        <button class="btn btn-outline-success" id="simRaise">加注</button>
+                        <button class="btn btn-outline-danger" id="simFold">弃牌</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 聊天区域 -->
+        <div class="chat-container">
+            <div class="chat-messages" id="chatMessages">
+                <!-- 聊天消息将在这里动态添加 -->
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chatInput" placeholder="输入消息...">
+                <button class="btn btn-primary" id="sendMessage">发送</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 游戏状态提示 -->
+    <div id="gameStatus" class="game-status"></div>
+
+    <!-- 模态框 -->
+    <div class="modal fade" id="gameModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">游戏提示</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- 模态框内容将在这里动态添加 -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stomp-websocket@2.3.4-next/lib/stomp.min.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html> 

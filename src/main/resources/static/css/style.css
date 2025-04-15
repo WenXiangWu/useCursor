@@ -1,116 +1,342 @@
+/* 全局样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-    background-color: #f5f5f5;
+    background-color: #0a0f1a;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-.game-table {
-    background-color: #2c7744;
-    border-radius: 15px;
+/* 游戏主容器 */
+.game-container {
+    max-width: 1440px;
+    margin: 0 auto;
     padding: 20px;
-    min-height: 500px;
-    position: relative;
+    width: 100%;
 }
 
+/* 扑克桌 */
+.game-table {
+    background: linear-gradient(135deg, #1e3a5f 0%, #0f1f33 100%);
+    border-radius: 40px;
+    padding: 40px;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    margin: 20px auto;
+    aspect-ratio: 16/9;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 20px;
+}
+
+/* 玩家座位 */
 .player-seat {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
+    background: rgba(16, 24, 38, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
     padding: 15px;
-    margin: 10px;
-    text-align: center;
-    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s ease;
 }
 
 .player-seat.active {
-    border: 3px solid #ffd700;
+    border: 2px solid #4a9eff;
+    box-shadow: 0 0 20px rgba(74, 158, 255, 0.2);
 }
 
 .player-seat.current-turn {
-    background-color: rgba(255, 215, 0, 0.3);
+    background: rgba(74, 158, 255, 0.1);
+    border: 2px solid #ffd700;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    animation: pulseTurn 2s infinite;
 }
 
-.card {
-    display: inline-block;
-    width: 60px;
-    height: 90px;
-    margin: 5px;
-    background-color: white;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    line-height: 90px;
-    font-size: 24px;
+/* 玩家信息 */
+.player-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
 }
 
-.card.hidden {
-    background-color: #b71c1c;
-    color: white;
-}
-
-#communityCards {
-    background-color: rgba(0, 0, 0, 0.3);
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
-
-#potInfo {
-    font-size: 24px;
-    color: white;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-}
-
-#actionPanel {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 15px;
-    border-radius: 10px;
-}
-
-#actionPanel button {
-    margin: 0 5px;
+.player-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
 }
 
 .player-chips {
-    color: #ffd700;
-    font-weight: bold;
-    margin-top: 5px;
+    font-size: 14px;
+    color: #4a9eff;
+    font-weight: 500;
 }
 
 .player-bet {
+    font-size: 14px;
     color: #4caf50;
-    font-weight: bold;
-    margin-top: 5px;
+    font-weight: 500;
 }
 
-.card-header {
-    background-color: #007bff;
-    color: white;
+/* 扑克牌样式 */
+.card {
+    width: 60px;
+    height: 84px;
+    background: #ffffff;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
+    user-select: none;
+}
+
+.card.hidden {
+    background: linear-gradient(135deg, #2a3f5f 0%, #1a2838 100%);
+    color: transparent;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* 公共牌区域 */
+#communityCards {
+    grid-column: 1 / 4;
+    grid-row: 2;
+    background: rgba(16, 24, 38, 0.6);
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 奖池信息 */
+#potInfo {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    font-weight: 600;
+    color: #4a9eff;
+    padding: 10px 20px;
+    background: rgba(16, 24, 38, 0.8);
+    border-radius: 12px;
+    border: 1px solid rgba(74, 158, 255, 0.3);
+}
+
+/* 操作面板 */
+#actionPanel {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    padding: 20px;
+    background: rgba(16, 24, 38, 0.9);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+}
+
+/* 按钮样式 */
+.btn {
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
+    background: linear-gradient(135deg, #4a9eff 0%, #2d7bd4 100%);
+    color: white;
 }
 
-.btn-primary:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
+.btn-danger {
+    background: linear-gradient(135deg, #ff4a4a 0%, #d42d2d 100%);
+    color: white;
 }
 
-.form-control:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+.btn-success {
+    background: linear-gradient(135deg, #4aff4a 0%, #2dd42d 100%);
+    color: white;
 }
 
-ul {
-    list-style-type: none;
-    padding-left: 0;
-    text-align: center;
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-li {
-    margin: 5px 0;
-    color: #666;
-} 
+/* 响应式设计 */
+@media (max-width: 1200px) {
+    .game-table {
+        padding: 30px;
+        gap: 15px;
+    }
+
+    .card {
+        width: 50px;
+        height: 70px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .game-table {
+        padding: 20px;
+        gap: 10px;
+        border-radius: 20px;
+    }
+
+    .player-seat {
+        padding: 10px;
+    }
+
+    .card {
+        width: 40px;
+        height: 56px;
+        font-size: 14px;
+    }
+
+    #actionPanel {
+        width: 90%;
+        padding: 15px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 12px;
+    }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(74, 158, 255, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(74, 158, 255, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(74, 158, 255, 0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease forwards;
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+/* 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #121212;
+    }
+
+    .game-table {
+        background: linear-gradient(145deg, #1a472a 0%, #2c7744 100%);
+    }
+}
+
+.dealer-status {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    z-index: 100;
+    animation: fadeInOut 2s infinite;
+}
+
+.game-controls {
+    display: flex;
+    gap: 10px;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { opacity: 0.7; }
+}
+
+.simulation-panel {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.simulation-panel h5 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.player-simulation-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.player-simulation-controls .form-select {
+    width: 200px;
+    margin-bottom: 10px;
+}
+
+.player-simulation-controls .btn-group {
+    display: flex;
+    gap: 5px;
+}
+
+.player-simulation-controls .btn {
+    flex: 1;
+}
+
+.player-role {
+    font-size: 12px;
+    color: #ffd700;
+    font-weight: 500;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-bottom: 5px;
+}
+
+@keyframes pulseTurn {
+    0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+}

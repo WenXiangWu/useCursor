@@ -1,60 +1,42 @@
 package com.poker.event;
 
 import org.springframework.context.ApplicationEvent;
+import java.util.List;
 
 public class HandStartedEvent extends ApplicationEvent {
     private final String gameId;
-    private final String handId;
-    private final int round;
-    private final int smallBlind;
-    private final int bigBlind;
+    private final int handNumber;
+    private final List<String> players;
     private final String dealerId;
-    private final String smallBlindPlayerId;
-    private final String bigBlindPlayerId;
+    private final long startTime;
 
-    public HandStartedEvent(Object source, String gameId, String handId, int round,
-                          int smallBlind, int bigBlind, String dealerId,
-                          String smallBlindPlayerId, String bigBlindPlayerId) {
+    public HandStartedEvent(Object source, String gameId, int handNumber, List<String> players, 
+                          String dealerId, long startTime) {
         super(source);
         this.gameId = gameId;
-        this.handId = handId;
-        this.round = round;
-        this.smallBlind = smallBlind;
-        this.bigBlind = bigBlind;
+        this.handNumber = handNumber;
+        this.players = players;
         this.dealerId = dealerId;
-        this.smallBlindPlayerId = smallBlindPlayerId;
-        this.bigBlindPlayerId = bigBlindPlayerId;
+        this.startTime = startTime;
     }
 
     public String getGameId() {
         return gameId;
     }
 
-    public String getHandId() {
-        return handId;
+    public int getHandNumber() {
+        return handNumber;
     }
 
-    public int getRound() {
-        return round;
-    }
-
-    public int getSmallBlind() {
-        return smallBlind;
-    }
-
-    public int getBigBlind() {
-        return bigBlind;
+    public List<String> getPlayers() {
+        return players;
     }
 
     public String getDealerId() {
         return dealerId;
     }
 
-    public String getSmallBlindPlayerId() {
-        return smallBlindPlayerId;
-    }
-
-    public String getBigBlindPlayerId() {
-        return bigBlindPlayerId;
+    public long getStartTime() {
+        return startTime;
     }
 } 

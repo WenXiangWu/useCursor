@@ -1,166 +1,80 @@
 package com.poker.event;
 
-import com.poker.event.*;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
+import org.springframework.context.event.EventListener;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.List;
-
+@Slf4j
 @Component
 public class GameEventManager {
-    private final List<GameEventListener> listeners = new ArrayList<>();
-    private final ApplicationEventPublisher eventPublisher;
 
-    public GameEventManager(ApplicationEventPublisher eventPublisher) {
-        this.eventPublisher = eventPublisher;
-    }
-
-    public void addEventListener(GameEventListener listener) {
-        listeners.add(listener);
-    }
-
-    public void removeEventListener(GameEventListener listener) {
-        listeners.remove(listener);
-    }
-
-    public void fireEvent(GameStartedEvent event) {
-        eventPublisher.publishEvent(event);
-        for (GameEventListener listener : listeners) {
-            listener.onGameStarted(event);
+    @EventListener
+    public void handleGameEvent(GameEvent event) {
+        log.info("收到游戏事件: {}", event.getEventType());
+        
+        GameEvent.GameEventType eventType = event.getEventType();
+        switch (eventType) {
+            case CREATED:
+                handleGameCreated(event);
+                break;
+            case STARTED:
+                handleGameStarted(event);
+                break;
+            case PLAYER_JOINED:
+                handlePlayerJoined(event);
+                break;
+            case PLAYER_LEFT:
+                handlePlayerLeft(event);
+                break;
+            case PLAYER_ACTION:
+                handlePlayerAction(event);
+                break;
+            case ROUND_ENDED:
+                handleRoundEnded(event);
+                break;
+            case GAME_ENDED:
+                handleGameEnded(event);
+                break;
+            case PLAYER_TIMEOUT:
+                handlePlayerTimeout(event);
+                break;
+            default:
+                log.warn("未处理的事件类型: {}", eventType);
         }
     }
 
-    public void fireEvent(GameEndedEvent event) {
-        eventPublisher.publishEvent(event);
-        for (GameEventListener listener : listeners) {
-            listener.onGameEnded(event);
-        }
+    private void handleGameCreated(GameEvent event) {
+        log.info("游戏创建: {}", event.getGame().getId());
     }
 
-    public void fireEvent(PlayerJoinedEvent event) {
-        eventPublisher.publishEvent(event);
-        for (GameEventListener listener : listeners) {
-            listener.onPlayerJoined(event);
-        }
+    private void handleGameStarted(GameEvent event) {
+        log.info("游戏开始: {}", event.getGame().getId());
     }
 
-    public void fireEvent(PlayerLeftEvent event) {
-        eventPublisher.publishEvent(event);
-        for (GameEventListener listener : listeners) {
-            listener.onPlayerLeft(event);
-        }
+    private void handlePlayerJoined(GameEvent event) {
+        log.info("玩家加入: {} -> {}", event.getPlayer().getUsername(), event.getGame().getId());
     }
 
-    public void fireEvent(RoundStartedEvent event) {
-        eventPublisher.publishEvent(event);
-        for (GameEventListener listener : listeners) {
-            listener.onRoundStarted(event);
-        }
+    private void handlePlayerLeft(GameEvent event) {
+        log.info("玩家离开: {} -> {}", event.getPlayer().getUsername(), event.getGame().getId());
     }
 
-    public void fireEvent(PlayerActionEvent event) {
-        eventPublisher.publishEvent(event);
-        for (GameEventListener listener : listeners) {
-            listener.onPlayerAction(event);
-        }
+    private void handlePlayerAction(GameEvent event) {
+        log.info("玩家行动: {} -> {} ({})", 
+            event.getPlayer().getUsername(), 
+            event.getGame().getId(), 
+            event.getAction());
     }
 
-    public void fireEvent(RoundEndedEvent event) {
-        eventPublisher.publishEvent(event);
-        for (GameEventListener listener : listeners) {
-            listener.onRoundEnded(event);
-        }
+    private void handleRoundEnded(GameEvent event) {
+        log.info("回合结束: {}", event.getGame().getId());
     }
 
-    public void fireEvent(CardDealtEvent event) {
-        eventPublisher.publishEvent(event);
-        for (GameEventListener listener : listeners) {
-            listener.onCardDealt(event);
-        }
+    private void handleGameEnded(GameEvent event) {
+        log.info("游戏结束: {}", event.getGame().getId());
     }
 
-    public void fireEvent(CommunityCardDealtEvent event) {
-        eventPublisher.publishEvent(event);
-        for (GameEventListener listener : listeners) {
-            listener.onCommunityCardDealt(event);
-        }
-    }
-
-    public void fireEvent(PlayerEliminatedEvent event) {
-        eventPublisher.publishEvent(event);
-        for (GameEventListener listener : listeners) {
-            listener.onPlayerEliminated(event);
-        }
-    }
-
-    public void fireEvent(GameStateChangedEvent event) {
-        eventPublisher.publishEvent(event);
-        for (GameEventListener listener : listeners) {
-            listener.onGameStateChanged(event);
-        }
-    }
-
-    public void fireEvent(BlindsChangedEvent event) {
-        eventPublisher.publishEvent(event);
-        for (GameEventListener listener : listeners) {
-            listener.onBlindsChanged(event);
-        }
-    }
-
-    public void fireEvent(DealerChangedEvent event) {
-        eventPublisher.publishEvent(event);
-        for (GameEventListener listener : listeners) {
-            listener.onDealerChanged(event);
-        }
-    }
-
-    public void fireEvent(PlayerTimeoutEvent event) {
-        eventPublisher.publishEvent(event);
-        for (GameEventListener listener : listeners) {
-            listener.onPlayerTimeout(event);
-        }
-    }
-
-    public void fireEvent(ChatMessageEvent event) {
-        eventPublisher.publishEvent(event);
-        for (GameEventListener listener : listeners) {
-            listener.onChatMessage(event);
-        }
-    }
-
-    public void fireEvent(BetPlacedEvent event) {
-        eventPublisher.publishEvent(event);
-        for (GameEventListener listener : listeners) {
-            listener.onBetPlaced(event);
-        }
-    }
-
-    public void fireEvent(HandStartedEvent event) {
-        eventPublisher.publishEvent(event);
-        for (GameEventListener listener : listeners) {
-            listener.onHandStarted(event);
-        }
-    }
-
-    public void fireEvent(CardsDealtEvent event) {
-        eventPublisher.publishEvent(event);
-        for (GameEventListener listener : listeners) {
-            listener.onCardsDealt(event);
-        }
-    }
-
-    public void fireEvent(CommunityCardsDealtEvent event) {
-        eventPublisher.publishEvent(event);
-        for (GameEventListener listener : listeners) {
-            listener.onCommunityCardsDealt(event);
-        }
-    }
-
-    public void fireEvent(PlayerFoldedEvent event) {
-        eventPublisher.publishEvent(event);
-        for (GameEventListener listener : listeners) {
-            listener.onPlayerFolded(event);
-        }
+    private void handlePlayerTimeout(GameEvent event) {
+        log.info("玩家超时: {} -> {}", event.getPlayer().getUsername(), event.getGame().getId());
     }
 }
